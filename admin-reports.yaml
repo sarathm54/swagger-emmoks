@@ -1,0 +1,1640 @@
+swagger: "2.0"
+info:
+  description: "eMooks is a mobile application that synchronizes texts and images of books (fairy tales or comics) with music, sound effects, and background noise. this document is for admin portal of emook application."
+  version: "1.0.0"
+  title: "Emook Admin - Reports"
+  termsOfService: "http://swagger.io/terms/"
+  contact:
+    email: "apiteam@swagger.io"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "192.168.1.1"
+basePath: "/v1"
+tags:
+- name: "Book"
+  description: "basic book operations"
+  externalDocs:
+    description: "Find out more"
+    url: "https://tiltlabs.atlassian.net/wiki/spaces/E/pages/2555924/Backend+Admin+Website+Features"
+
+- name: "Chapter"
+  description: "basic chapter operations"
+  externalDocs:
+    description: "Find out more about our app"
+    url: "https://tiltlabs.atlassian.net/wiki/spaces/E/pages/983042/eMooks+amplify+reading"
+  
+- name: "Chapter Images"
+  description: "chapter image operations"
+  externalDocs:
+    description: "Find out more about our app"
+    url: "https://tiltlabs.atlassian.net/wiki/spaces/E/pages/983042/eMooks+amplify+reading"
+
+- name: "Image Balloons"
+  description: "Image text balloon oprations"
+  externalDocs:
+    description: "Find out more about our app"
+    url: "https://tiltlabs.atlassian.net/wiki/spaces/E/pages/983042/eMooks+amplify+reading"
+  
+- name: "Chapter Audio"
+  description: "Chapter audio oprations"
+  externalDocs:
+    description: "Find out more about our app"
+    url: "https://tiltlabs.atlassian.net/wiki/spaces/E/pages/983042/eMooks+amplify+reading"
+  
+- name: "Image Audio"
+  description: "Image audio oprations"
+  externalDocs:
+    description: "Find out more about our app"
+    url: "https://tiltlabs.atlassian.net/wiki/spaces/E/pages/983042/eMooks+amplify+reading"
+  
+- name: "Book Store"
+  description: "Book store oprations"
+  externalDocs:
+    description: "Find out more about our app"
+    url: "https://tiltlabs.atlassian.net/wiki/spaces/E/pages/983042/eMooks+amplify+reading"
+
+- name: "Book Category"
+  description: "Book category oprations"
+  externalDocs:
+    description: "Find out more about our app"
+    url: "https://tiltlabs.atlassian.net/wiki/spaces/E/pages/983042/eMooks+amplify+reading"
+
+- name: "Music Track"
+  description: "Music track master data operations"
+  externalDocs:
+    description: "Find out more about our app"
+    url: "https://tiltlabs.atlassian.net/wiki/spaces/E/pages/983042/eMooks+amplify+reading"
+
+schemes:
+- "https"
+- "http"
+paths:
+  /book:
+    post:
+      tags:
+      - "Book"
+      summary: "Add a new book to the books"
+      description: ""
+      operationId: "addBook"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Book object that needs to be added to the books"
+        required: true
+        schema:
+          $ref: "#/definitions/Book"
+      responses:
+        405:
+          description: "Invalid input"
+        201:
+          description: "Created successfully"
+      security:
+      - admin_auth:
+        - "write:administrators"
+        - "read:administrators"
+    put:
+      tags:
+      - "Book"
+      summary: "Update an existing book"
+      description: ""
+      operationId: "updateBook"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        type: "integer"
+        name: "id"
+        description: "Book id to update"
+        required: true
+      - in: "body"
+        name: "body"
+        description: "Book object that needs to be added to the books"
+        required: true
+        schema:
+          $ref: "#/definitions/Book"
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Book not found"
+        405:
+          description: "Validation exception"
+      security:
+      - admin_auth:
+        - "write:administrators"
+        - "read:administrators"
+    get: 
+      tags:
+      - "Book"
+      summary: "Find all books"
+      description: "Returns list of all books"
+      operationId: "getAllBooks"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            allOf:
+              - $ref: "#/definitions/Pagination"
+              - properties:
+                  results: 
+                    type: "array"
+                    items:
+                      $ref: "#/definitions/Book"
+
+  /book/{bookId}:
+    get:
+      tags:
+      - "Book"
+      summary: "Find Book by ID"
+      description: "Returns a single Book"
+      operationId: "getBookById"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "bookId"
+        in: "path"
+        description: "ID of Book to return"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Book"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Pet not found"
+      security:
+      - admin_auth:
+        - "write:administrators"
+        - "read:administrators"
+
+    delete:
+      tags:
+      - "Book"
+      summary: "Deletes a book"
+      description: ""
+      operationId: "deleteBook"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "bookId"
+        in: "path"
+        description: "Book id to delete"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "Authorization"
+        in: "header"
+        required: false
+        type: "string"
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Book not found"
+      security:
+      - admin_auth:
+        - "write:administrators"
+        - "read:administrators"
+
+  /book/{bookId}/cover-image:
+    post:
+      tags:
+      - "Book"
+      summary: "upload book cover image"
+      description: ""
+      operationId: "uploadBookCover"
+      consumes:
+      - "multipart/form-data"
+      parameters:
+        - in: "path"
+          name: "bookId"
+          type: "integer"
+          format: "int64"
+          required: true
+        - in: "formData"
+          name: "cover_image"
+          type: "file"
+          required: true
+          description: "Upload book cover image file"
+      responses:
+        400:
+          description: "Invalid id supplied"
+        404:
+          description: "Book not found"
+      security:
+        - admin_auth:
+          - "write:administrators"
+          - "read:administrators"
+  /book/{bookId}/publish:
+    post:
+      tags:
+      - "Book"
+      summary: "Publish a new book to the store"
+      description: ""
+      operationId: "publishBook"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "bookId"
+        type: "integer"
+        format: "int64"
+        required: true
+      - in: "body"
+        name: "body"
+        description: "Book object that needs to be added to the store"
+        required: true
+        schema:
+          $ref: "#/definitions/BookStore"
+      responses:
+        405:
+          description: "Invalid input"
+        201:
+          description: "Created successfully"
+      security:
+      - admin_auth:
+        - "write:administrators"
+        - "read:administrators"
+#------------------------------------------------- End of book -----------------------------------------
+
+  /book/{bookId}/chapter:
+    post:
+      tags:
+      - "Chapter"
+      summary: "Create chapter"
+      description: "This can only be done by the logged in user."
+      operationId: "createUser"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "bookId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - in: "body"
+        name: "body"
+        description: "Created chapter object"
+        required: true
+        schema:
+          $ref: "#/definitions/Chapter"
+      responses:
+        default:
+          description: "successful operation"
+    get:
+      tags:
+      - "Chapter"
+      summary: "Get chapter by bookId"
+      description: ""
+      operationId: "getChapters"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "bookId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            allOf:
+              - $ref: "#/definitions/Pagination"
+              - properties:
+                  results: 
+                    type: "array"
+                    items:
+                      $ref: "#/definitions/Chapter"
+
+        400:
+          description: "Invalid id supplied"
+        404:
+          description: "User not found"
+
+  /book/{bookId}/chapter/{chapterId}:
+    get:
+      tags:
+      - "Chapter"
+      summary: "Get chapter by bookId and chapterid"
+      description: ""
+      operationId: "getChapterById"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "chapterId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "bookId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Chapter"
+        400:
+          description: "Invalid id supplied"
+        404:
+          description: "User not found"
+    put:
+      tags:
+      - "Chapter"
+      summary: "Updated user"
+      description: "This can only be done by the logged in user."
+      operationId: "updateUser"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "chapterId"
+        in: "path"
+        description: "id that need to be updated"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "bookId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - in: "body"
+        name: "body"
+        description: "Updated chapter object"
+        required: true
+        schema:
+          $ref: "#/definitions/Chapter"
+      responses:
+        400:
+          description: "Invalid id supplied"
+        404:
+          description: "User not found"
+    delete:
+      tags:
+      - "Chapter"
+      summary: "Delete user"
+      description: "This can only be done by the logged in user."
+      operationId: "deleteUser"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "bookId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "chapterId"
+        in: "path"
+        description: "The id that needs to be deleted"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        400:
+          description: "Invalid id supplied"
+        404:
+          description: "User not found"
+
+# ------------------------------------------------End of chapter---------------------------------------------
+
+  /book/{bookId}/chapter/{chapterId}/audio-track:
+    post:
+      tags:
+      - "Chapter Audio"
+      summary: "Add a new audio track to the chapter"
+      description: ""
+      operationId: "addChapterAudiotrack"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "bookId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "chapterId"
+        in: "path"
+        description: "The id that needs to be deleted"
+        required: true
+        type: "integer"
+        format: "int64"
+      - in: "body"
+        name: "body"
+        description: "Balloon object that needs to be added to the Image"
+        required: true
+        schema:
+          $ref: "#/definitions/ChapterAudioTrack"
+      responses:
+        405:
+          description: "Invalid input"
+        201:
+          description: "Created successfully"
+      security:
+      - admin_auth:
+        - "write:administrators"
+        - "read:administrators"
+    get: 
+      tags:
+      - "Chapter Audio"
+      summary: "Find all audio tracks by image"
+      description: "Returns list of all balloons of image"
+      operationId: "getAllChapterAudiotracks"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "bookId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "imageId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "chapterId"
+        in: "path"
+        description: "The id that needs to be deleted"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            allOf:
+              - $ref: "#/definitions/Pagination"
+              - properties:
+                  results:
+                    type: "array"
+                    items: 
+                      $ref: "#/definitions/ChapterAudioTrack"
+              
+  /book/{bookId}/chapter/{chapterId}/audio-track/{audioTrackId}:
+    put:
+      tags:
+      - "Chapter Audio"
+      summary: "Update audio track parameters"
+      description: "This can only be done by the logged in user."
+      operationId: "updateChapterAudiotrack"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "bookId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "imageId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "chapterId"
+        in: "path"
+        description: "The id that needs to be deleted"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "audioTrackId"
+        in: "path"
+        description: "The id that needs to be deleted"
+        required: true
+        type: "integer"
+        format: "int64"
+      - in: "body"
+        name: "body"
+        description: "Updated balloon object"
+        required: true
+        schema:
+          $ref: "#/definitions/ChapterAudioTrack"
+      responses:
+        400:
+          description: "Invalid id supplied"
+        404:
+          description: "image not found"
+    delete:
+      tags:
+      - "Chapter Audio"
+      summary: "Delete audio track"
+      description: "This can only be done by the logged in user."
+      operationId: "deleteChapterAudiotrack"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "bookId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "imageId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "chapterId"
+        in: "path"
+        description: "The id that needs to be deleted"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "audioTrackId"
+        in: "path"
+        description: "The id that needs to be deleted"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        400:
+          description: "Invalid id supplied"
+        404:
+          description: "User not found"
+
+# ---------------------------------------------------End of chapter audio------------------------------------
+
+  /book/{bookId}/chapter/{chapterId}/image:
+    post:
+      tags:
+      - "Chapter Images"
+      summary: "upload chapter image"
+      description: ""
+      operationId: "uploadChapterImage"
+      consumes:
+      - "multipart/form-data"
+      parameters:
+        - in: "path"
+          name: "bookId"
+          type: "integer"
+          format: "int64"
+          required: true
+        - in: "path"
+          name: "chapterId"
+          type: "integer"
+          format: "int64"
+          required: true
+        - in: "formData"
+          name: "cover_image"
+          type: "file"
+          required: true
+          description: "Upload book cover image file"
+      responses:
+        400:
+          description: "Invalid id supplied"
+        404:
+          description: "Book not found"
+        201:
+          description: "Created successfully"
+          schema:
+            $ref: "#/definitions/ApiResponse"
+      security:
+        - admin_auth:
+          - "write:administrators"
+          - "read:administrators"
+    get: 
+      tags:
+      - "Chapter Images"
+      summary: "Find all images by chapter"
+      description: "Returns list of all images of chapter"
+      operationId: "getAllImages"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "bookId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "imageId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "chapterId"
+        in: "path"
+        description: "The id that needs to be deleted"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            allOf:
+              - $ref: "#/definitions/Pagination"
+              - properties:
+                  results:
+                    type: "array"
+                    items: 
+                      $ref: "#/definitions/ChapterImage"
+
+  /book/{bookId}/chapter/{chapterId}/image/{imageId}:
+    put:
+      tags:
+      - "Chapter Images"
+      summary: "Update image parameters"
+      description: "This can only be done by the logged in user."
+      operationId: "updateImageParams"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "bookId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "imageId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "chapterId"
+        in: "path"
+        description: "The id that needs to be deleted"
+        required: true
+        type: "integer"
+        format: "int64"
+      - in: "body"
+        name: "body"
+        description: "Updated image object"
+        required: true
+        schema:
+          $ref: "#/definitions/ChapterImage"
+      responses:
+        400:
+          description: "Invalid id supplied"
+        404:
+          description: "image not found"
+    delete:
+      tags:
+      - "Chapter Images"
+      summary: "Delete chapter image"
+      description: "This can only be done by the logged in user."
+      operationId: "deleteChapterImage"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "bookId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "imageId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "chapterId"
+        in: "path"
+        description: "The id that needs to be deleted"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        400:
+          description: "Invalid id supplied"
+        404:
+          description: "User not found"
+          
+#------------------------------------------------- End of chapter images -----------------------------------------
+
+  /book/{bookId}/chapter/{chapterId}/image/{imageId}/balloon:
+    post:
+      tags:
+      - "Image Balloons"
+      summary: "Add a new balloon to the image"
+      description: ""
+      operationId: "addBalloon"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "bookId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "imageId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "chapterId"
+        in: "path"
+        description: "The id that needs to be deleted"
+        required: true
+        type: "integer"
+        format: "int64"
+      - in: "body"
+        name: "body"
+        description: "Balloon object that needs to be added to the Image"
+        required: true
+        schema:
+          $ref: "#/definitions/Balloon"
+      responses:
+        405:
+          description: "Invalid input"
+        201:
+          description: "Created successfully"
+      security:
+      - admin_auth:
+        - "write:administrators"
+        - "read:administrators"
+    get: 
+      tags:
+      - "Image Balloons"
+      summary: "Find all balloons by image"
+      description: "Returns list of all balloons of image"
+      operationId: "getAllBalloons"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "bookId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "imageId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "chapterId"
+        in: "path"
+        description: "The id that needs to be deleted"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            allOf:
+              - $ref: "#/definitions/Pagination"
+              - properties:
+                  results:
+                    type: "array"
+                    items: 
+                      $ref: "#/definitions/Balloon"
+
+  /book/{bookId}/chapter/{chapterId}/image/{imageId}/balloon/{balloonId}:
+    put:
+      tags:
+      - "Image Balloons"
+      summary: "Update balloon parameters"
+      description: "This can only be done by the logged in user."
+      operationId: "updateBalloon"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "bookId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "imageId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "chapterId"
+        in: "path"
+        description: "The id that needs to be deleted"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "balloonId"
+        in: "path"
+        description: "The id that needs to be deleted"
+        required: true
+        type: "integer"
+        format: "int64"
+      - in: "body"
+        name: "body"
+        description: "Updated balloon object"
+        required: true
+        schema:
+          $ref: "#/definitions/ChapterImage"
+      responses:
+        400:
+          description: "Invalid id supplied"
+        404:
+          description: "image not found"
+    delete:
+      tags:
+      - "Image Balloons"
+      summary: "Delete balloon"
+      description: "This can only be done by the logged in user."
+      operationId: "deleteImageBalloon"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "bookId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "imageId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "chapterId"
+        in: "path"
+        description: "The id that needs to be deleted"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "balloonId"
+        in: "path"
+        description: "The id that needs to be deleted"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        400:
+          description: "Invalid id supplied"
+        404:
+          description: "User not found"
+#------------------------------------------------- End of image balloons -----------------------------------------
+
+  /book/{bookId}/chapter/{chapterId}/image/{imageId}/audio-track:
+    post:
+      tags:
+      - "Image Audio"
+      summary: "Add a new audio track to the image"
+      description: ""
+      operationId: "addImageAudiotrack"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "bookId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "imageId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "chapterId"
+        in: "path"
+        description: "The id that needs to be deleted"
+        required: true
+        type: "integer"
+        format: "int64"
+      - in: "body"
+        name: "body"
+        description: "Balloon object that needs to be added to the Image"
+        required: true
+        schema:
+          $ref: "#/definitions/ChapterImageAudioTrack"
+      responses:
+        405:
+          description: "Invalid input"
+        201:
+          description: "Created successfully"
+      security:
+      - admin_auth:
+        - "write:administrators"
+        - "read:administrators"
+    get: 
+      tags:
+      - "Image Audio"
+      summary: "Find all audio tracks by image"
+      description: "Returns list of all balloons of image"
+      operationId: "getAllImageAudiotracks"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "bookId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "imageId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "chapterId"
+        in: "path"
+        description: "The id that needs to be deleted"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            allOf:
+              - $ref: "#/definitions/Pagination"
+              - properties:
+                  results:
+                    type: "array"
+                    items: 
+                      $ref: "#/definitions/ChapterImageAudioTrack"
+              
+  /book/{bookId}/chapter/{chapterId}/image/{imageId}/audio-track/{trackId}:
+    put:
+      tags:
+      - "Image Audio"
+      summary: "Update audio track parameters"
+      description: "This can only be done by the logged in user."
+      operationId: "updateImageAudiotrack"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "bookId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "imageId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "chapterId"
+        in: "path"
+        description: "The id that needs to be deleted"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "trackId"
+        in: "path"
+        description: "The id that needs to be deleted"
+        required: true
+        type: "integer"
+        format: "int64"
+      - in: "body"
+        name: "body"
+        description: "Updated balloon object"
+        required: true
+        schema:
+          $ref: "#/definitions/ChapterImageAudioTrack"
+      responses:
+        400:
+          description: "Invalid id supplied"
+        404:
+          description: "image not found"
+    delete:
+      tags:
+      - "Image Audio"
+      summary: "Delete audio track"
+      description: "This can only be done by the logged in user."
+      operationId: "deleteImageAudiotrack"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "bookId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "imageId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "chapterId"
+        in: "path"
+        description: "The id that needs to be deleted"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "trackId"
+        in: "path"
+        description: "The id that needs to be deleted"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        400:
+          description: "Invalid id supplied"
+        404:
+          description: "User not found"
+
+#------------------------------------------------- End of image audio  -----------------------------------------
+
+  /store:
+    get: 
+      tags:
+      - "Book Store"
+      summary: "Find a book from store"
+      description: "Returns a book from store"
+      operationId: "getAllStoreItem"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            allOf:
+              - $ref: "#/definitions/Pagination"
+              - properties:
+                  results:
+                    type: "array"
+                    items: 
+                      $ref: "#/definitions/BookStore"
+
+  /store/{storeItemId}:
+    get: 
+      tags:
+      - "Book Store"
+      summary: "Find a book from store"
+      description: "Returns a book from store"
+      operationId: "getStoreItemById"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "storeItemId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/BookStore"
+    put:
+      tags:
+      - "Book Store"
+      summary: "Update audio track parameters"
+      description: "This can only be done by the logged in user."
+      operationId: "updateStoreItem"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "storeItemId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - in: "body"
+        name: "body"
+        description: "Updated balloon object"
+        required: true
+        schema:
+          $ref: "#/definitions/BookStore"
+      responses:
+        400:
+          description: "Invalid id supplied"
+        404:
+          description: "image not found"
+
+    delete:
+      tags:
+      - "Book Store"
+      summary: "Unpublish store item"
+      description: "This can only be done by the logged in user. "
+      operationId: "unPublishStoreItem"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "storeItemId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        400:
+          description: "Invalid id supplied"
+        404:
+          description: "User not found"
+
+#------------------------------------------------- End of book store  -----------------------------------------
+
+  /category:
+    get: 
+      tags:
+      - "Book Category"
+      summary: "Get list of categories"
+      description: "Returns a list of cateries"
+      operationId: "getAllCategories"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            allOf:
+              - $ref: "#/definitions/Pagination"
+              - properties:
+                  results:
+                    type: "array"
+                    items: 
+                      $ref: "#/definitions/BookCategory"
+
+    post:
+      tags:
+      - "Book Category"
+      summary: "Create book category"
+      description: ""
+      operationId: "createNewCategory"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Balloon object that needs to be added to the Image"
+        required: true
+        schema:
+          $ref: "#/definitions/BookCategory"
+      responses:
+        405:
+          description: "Invalid input"
+        201:
+          description: "Created successfully"
+      security:
+      - admin_auth:
+        - "write:administrators"
+        - "read:administrators"
+        
+  /category/{categoryId}:
+    delete:
+      tags:
+      - "Book Category"
+      summary: "Delete book category"
+      description: "This can only be done by the logged in user. "
+      operationId: "deleteCategory"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "categoryId"
+        in: "path"
+        description: "The id that needs to be fetched. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        400:
+          description: "Invalid id supplied"
+        404:
+          description: "User not found"
+  /category/{categoryId}/thumbnail-image:
+    post:
+      tags:
+      - "Book Category"
+      summary: "upload vategory thumbnail image"
+      description: ""
+      operationId: "uploadCategoryThumbnail"
+      consumes:
+      - "multipart/form-data"
+      parameters:
+        - in: "path"
+          name: "categoryId"
+          type: "integer"
+          format: "int64"
+          required: true
+        - in: "formData"
+          name: "cover_image"
+          type: "file"
+          required: true
+          description: "Upload book cover image file"
+      responses:
+        400:
+          description: "Invalid id supplied"
+        404:
+          description: "Book not found"
+      security:
+        - admin_auth:
+          - "write:administrators"
+          - "read:administrators"
+
+#------------------------------------------------- End of book category  -----------------------------------------
+
+  /music-track:
+    get: 
+      tags:
+      - "Music Track"
+      summary: "Get list of categories"
+      description: "Returns a list of cateries"
+      operationId: "getAllMusicTrack"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            allOf:
+              - $ref: "#/definitions/Pagination"
+              - properties:
+                  results:
+                    type: "array"
+                    items: 
+                      $ref: "#/definitions/MusicTrack"
+
+    post:
+      tags:
+      - "Music Track"
+      summary: "Create new music track"
+      description: ""
+      operationId: "createMusicTrack"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Music object for add new music"
+        required: true
+        schema:
+          $ref: "#/definitions/MusicTrack"
+      responses:
+        405:
+          description: "Invalid input"
+        201:
+          description: "Created successfully"
+      security:
+      - admin_auth:
+        - "write:administrators"
+        - "read:administrators"
+        
+  /music-track/{musicTrackId}:
+
+    put:
+      tags:
+      - "Music Track"
+      summary: "Update audio track parameters"
+      description: "This can only be done by the logged in user."
+      operationId: "musicTrackUpdate"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "musicTrackId"
+        in: "path"
+        description: "The id that needs to be updated. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - in: "body"
+        name: "body"
+        description: "Updated music object"
+        required: true
+        schema:
+          $ref: "#/definitions/MusicTrack"
+      responses:
+        400:
+          description: "Invalid id supplied"
+        404:
+          description: "image not found"
+
+    delete:
+      tags:
+      - "Music Track"
+      summary: "Delete music track"
+      description: "Delete music track"
+      operationId: "deleteMusicTrack"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "musicTrackId"
+        in: "path"
+        description: "The id that needs to be deleted. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        400:
+          description: "Invalid id supplied"
+        404:
+          description: "Track not found"
+
+#---------------------------------------------End of music track -----------------------------------------
+
+securityDefinitions:
+  admin_auth:
+    type: "oauth2"
+    authorizationUrl: "http://petstore.swagger.io/oauth/dialog"
+    flow: "implicit"
+    scopes:
+      write:administrators: "modify administrators in your account"
+      read:administrators: "read your administrators"
+  api_key:
+    type: "apiKey"
+    name: "Authorization"
+    in: "header"
+definitions:
+  Pagination:
+    type: "object"
+    properties:
+      total:
+        type: "string"
+        example: "690"
+      page:
+        type: "string"
+        example: "1"
+      page_size:
+        type: "string"
+        example: "25"
+          
+  MusicTrack:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      title: 
+        type: "string"
+      description: 
+        type: "string"
+      audio_file:
+        type: "string"
+      typology: 
+        type: "string"
+      status:
+        type: "string"
+
+  BookCategory:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      name:
+        type: "string"
+        example: "Fairy Tale"
+      description:
+        type: "string"
+        example: "Deals with fairy table books"
+      thumbnail: 
+        type: "string"
+        readOnly: true
+
+  Nationality:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      price:
+        type: "number"
+      currency:
+        type: "object"
+      country:
+        type: "object"
+
+  BookStore:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      display_priority:
+        type: "string"
+        example: "trending"
+      status: 
+        type: "string"
+        enum:
+        - "coming_soon"
+        - "published"
+      rating:
+        type: "number"
+        readOnly: true
+        example: "4.5"
+      nationality:
+        type: "array"
+        items:
+          $ref: "#/definitions/Nationality"
+        
+
+  ChapterAudioTrack:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      sound_track:
+        type: "object"
+      is_loop:
+        type: "boolean"
+      start_image_index:
+        type: "number"
+      stop_image_index:
+        type: "number"
+      volume:
+        type: "number"
+      fade_in_seconds:
+        type: "number"
+      fade_out_seconds:
+        type: "number"
+
+  ChapterImageAudioTrack:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      sound_track:
+        type: "object"
+      is_loop:
+        type: "boolean"
+      volume:
+        type: "number"
+      fade_in_seconds:
+        type: "number"
+      fade_out_seconds:
+        type: "number"
+        
+  Balloon:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      pos_x:
+        type: "number"
+        example: "296.5"
+      pos_y:
+        type: "number"
+        example: "54.5"
+      width:
+        type: "number"
+        example: "120"
+      height:
+        type: "number"
+        example: "80"
+      type:
+        type: "string"
+        example: "rectangle"
+        enum: 
+          - "oval"
+          - "rectangle"
+      order:
+        type: "number"
+        example: "1"
+        
+  Chapter:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      title:
+        type: "string"
+        example: "Chapter_1"
+      is_guest_preview:
+        type: "boolean"
+      order:
+        type: "number"
+        example: "1"
+      page_number:
+        type: "number"
+        example: "01"
+  ChapterImage:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      duration_seconds:
+        type: "number"
+      image:
+        type: "string"
+  Book:
+    type: "object"
+    required:
+    - "name"
+    - "subtitle"
+    - "author"
+    - "editor"
+    - "language"
+    - "category"
+    - "total_pages"
+    - "cover_image"
+    - "is_audiobook"
+    - "default_speed"
+    - "is_series"
+    - "is_emooks_original"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      name:
+        type: "string"
+        example: "book_1"
+      subtitle:
+        type: "string"
+        example: "sample book for testing"
+      author:
+        type: "object"
+      editor:
+        type: "object"
+      language:
+        type: "object"
+        
+      category:
+        type: "object"
+      total_pages:
+        type: "number"
+        example: "25"
+      cover_image:
+        type: "object"
+        
+      is_audiobook:
+        type: "boolean"
+        
+      default_speed:
+        type: "number"
+        example: "1.5"
+
+      is_series: 
+        type: "boolean"
+        example: "false"
+  
+      is_emooks_original:
+        type: "boolean"
+      tag:
+        type: "array"
+        items:
+          type: "string"
+          example: "tag1"
+
+  ApiResponse:
+    type: "object"
+    properties:
+      code:
+        type: "integer"
+        format: "int32"
+      type:
+        type: "string"
+      message:
+        type: "string"
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"
