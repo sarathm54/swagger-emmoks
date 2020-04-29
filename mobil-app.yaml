@@ -1,6 +1,6 @@
 swagger: "2.0"
 info:
-  description: "eMooks is a mobile application that synchronizes texts and images of books (fairy tales or comics) with music, sound effects, and background noise. this document is for admin portal of emook application."
+  description: "eMooks is a mobile application that synchronizes texts and images of books (fairy tales or comics) with music, sound effects, and background noise. this document is for frontend. Use 'Bearer special-key' as Authorization token"
   version: "1.0.0"
   title: "Emook Mobile App API's"
   termsOfService: "http://swagger.io/terms/"
@@ -9,8 +9,8 @@ info:
   license:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "13.233.196.150:10010"
-basePath: "/v1"
+host: "13.233.196.150"
+# basePath: ""
 tags:
 - name: "User"
   description: "basic user operations"
@@ -65,6 +65,18 @@ tags:
   externalDocs:
     description: "Find out more about our app"
     url: "https://tiltlabs.atlassian.net/wiki/spaces/E/pages/983042/eMooks+amplify+reading"
+    
+- name: "Book Favourites"
+  description: "Book User Favourites oprations"
+  externalDocs:
+    description: "Find out more about our app"
+    url: "https://tiltlabs.atlassian.net/wiki/spaces/E/pages/983042/eMooks+amplify+reading"
+    
+- name: "Book Purchases"
+  description: "Book User Purchases oprations"
+  externalDocs:
+    description: "Find out more about our app"
+    url: "https://tiltlabs.atlassian.net/wiki/spaces/E/pages/983042/eMooks+amplify+reading"
 
 schemes:
 - "https"
@@ -93,10 +105,7 @@ paths:
           description: "Invalid input"
         201:
           description: "Created successfully"
-      security:
-      - user_auth:
-        - "write:user"
-        - "read:user"
+
 
   /login:
     post:
@@ -121,10 +130,7 @@ paths:
           description: "Invalid input"
         200:
           description: "successfull operation"
-      security:
-      - user_auth:
-        - "write:user"
-        - "read:user"
+
   /profile:
     put:
       tags:
@@ -524,6 +530,44 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/BookStore"
+            
+            
+    post:
+      tags:
+      - "Book Store"
+      summary: "Update book rating in book store a new user to the system"
+      description: ""
+      operationId: "updateRating"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "storeItemId"
+        in: "path"
+        description: "The id that needs to be updated. Use 1 for testing. "
+        required: true
+        type: "integer"
+        format: "int64"
+      - in: "body"
+        name: "body"
+        description: "User object that added to the users"
+        required: true
+        schema:
+          type: "object"
+          properties:
+            rating:
+              type: "string"
+              example: "4"
+      responses:
+        405:
+          description: "Invalid input"
+        201:
+          description: "Created successfully"
+      security:
+      - user_auth:
+        - "write:user"
+        - "read:user"
 
 #------------------------------------------------- End of book store  -----------------------------------------
 
@@ -550,6 +594,83 @@ paths:
                       $ref: "#/definitions/BookCategory"
 
 #------------------------------------------------- End of book category  -----------------------------------------
+
+  /favourites:
+    get: 
+      tags:
+      - "Book Favourites"
+      summary: "Get list of favourites"
+      description: "Returns a list of favouritre books"
+      operationId: "getAllFavourites"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            allOf:
+              - $ref: "#/definitions/Pagination"
+              - properties:
+                  results:
+                    type: "array"
+                    items:
+                      $ref: "#/definitions/BookStore"
+    post:
+      tags:
+      - "Book Favourites"
+      summary: "Add an item to favourites"
+      description: ""
+      operationId: "addToFacourites"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Book store object that added to the favourites"
+        required: true
+        schema:
+          properties:
+            book_store_id:
+              type: "string"
+      responses:
+        405:
+          description: "Invalid input"
+        201:
+          description: "Created successfully"
+      security:
+      - user_auth:
+        - "write:user"
+        - "read:user"
+        
+#------------------------------------------------- End of book favourites  -----------------------------------------
+
+
+  /my-books:
+    get: 
+      tags:
+      - "Book Purchases"
+      summary: "Get list of my purchased books"
+      description: "Returns a list of purchased books"
+      operationId: "getAllPurchasedBooks"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            allOf:
+              - $ref: "#/definitions/Pagination"
+              - properties:
+                  results:
+                    type: "array"
+                    items:
+                      $ref: "#/definitions/BookStore"
+        
+#------------------------------------------------- End of book purchases  ------------------------------------------
 
 securityDefinitions:
   user_auth:
@@ -595,6 +716,7 @@ definitions:
       id:
         type: "integer"
         format: "int64"
+        readOnly: true
       name:
         type: "string"
         example: "book_1"
@@ -640,6 +762,7 @@ definitions:
       id:
         type: "integer"
         format: "int64"
+        readOnly: true
       name:
         type: "string"
         example: "Fairy Tale"
@@ -656,6 +779,7 @@ definitions:
       id:
         type: "integer"
         format: "int64"
+        readOnly: true
       price:
         type: "number"
       currency:
@@ -669,6 +793,7 @@ definitions:
       id:
         type: "integer"
         format: "int64"
+        readOnly: true
       display_priority:
         type: "string"
         example: "trending"
@@ -806,6 +931,7 @@ definitions:
       id:
         type: "integer"
         format: "int64"
+        readOnly: true
       first_name:
         type: "string"
         example: "Prisca"
@@ -843,9 +969,6 @@ definitions:
     - "dob"
 
     properties:
-      id:
-        type: "integer"
-        format: "int64"
       first_name:
         type: "string"
         example: "Prisca"
